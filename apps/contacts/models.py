@@ -6,13 +6,6 @@ class InstagramProfile(models.Model):
     username = models.CharField(max_length=255, unique=True, blank=True)
     url = models.URLField(unique=True)
 
-    def __str__(self):
-        return self.username
-    class Meta:
-        verbose_name = "Профиль"
-        verbose_name_plural = "Профиль"
-        
-    
     def save(self, *args, **kwargs):
         if not self.username:  # Если username не установлен
             self._parse_instagram_data()
@@ -25,7 +18,7 @@ class InstagramProfile(models.Model):
         L = instaloader.Instaloader()
         
         # Указание логина и пароля для аутентификации в Instagram
-        L.context.login('shus_dv', 'erk1nbaew')
+        L.context.login('koeau_gpf', 'erk1nbaew')
         
         # Загрузка профиля
         profile = instaloader.Profile.from_username(L.context, self.username)
@@ -62,16 +55,8 @@ class InstagramPost(models.Model):
 
     def __str__(self):
         return self.description
-    class Meta:
-        verbose_name = "Публикации"
-        verbose_name_plural = "Публикации"
+
 class InstagramComment(models.Model):
     post = models.ForeignKey(InstagramPost, related_name='comments', on_delete=models.CASCADE)
     text = models.TextField()
     created_at = models.DateTimeField(default=timezone.now)
-    def __str__(self):
-        return self.post
-    class Meta:
-        verbose_name = "Комментарии"
-        verbose_name_plural = "Комментарии"
-        
