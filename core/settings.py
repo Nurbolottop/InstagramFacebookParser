@@ -40,8 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'apps.base',
-    'apps.secondary',
+    # 'apps.base',
+    # 'apps.secondary',
     'apps.contacts',
     'apps.telegram_bot'
 ]

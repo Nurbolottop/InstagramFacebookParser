@@ -1,10 +1,18 @@
 from django.db import models
+from django.utils import timezone
 import instaloader
 
 class InstagramProfile(models.Model):
     username = models.CharField(max_length=255, unique=True, blank=True)
     url = models.URLField(unique=True)
 
+    def __str__(self):
+        return self.username
+    class Meta:
+        verbose_name = "Профиль"
+        verbose_name_plural = "Профиль"
+        
+    
     def save(self, *args, **kwargs):
         if not self.username:  # Если username не установлен
             self._parse_instagram_data()
@@ -23,43 +31,47 @@ class InstagramProfile(models.Model):
         profile = instaloader.Profile.from_username(L.context, self.username)
 
         # Сохранение профиля
-        self.save()
+        super().save()
 
-        # Парсинг и сохранение последних 10 постов
         # Парсинг и сохранение последних 10 постов
         posts_to_create = []
         for post in profile.get_posts():
             if len(posts_to_create) >= 10:
                 break
-            posts_to_create.append(InstagramPost(
+            # Проверяем наличие описания перед созданием объекта InstagramPost
+            description = post.caption if post.caption else ""
+            post_obj = InstagramPost(
                 profile=self,
+                post_url=f"https://www.instagram.com/p/{post.shortcode}/",
                 image_url=post.url,
-                description=post.caption,
-                created_at=post.date.isoformat(),
-                post_url=f"https://www.instagram.com/p/{post.shortcode}/"  # Сохраняем ссылку на публикацию
-            ))
-        InstagramPost.objects.bulk_create(posts_to_create)
+                description=description,
+                created_at=post.date,
+            )
+            post_obj.save()  # Сохраняем каждый пост отдельно
+            # Получаем и сохраняем комментарии для каждого поста
+            comments = [comment.text for comment in post.get_comments()]
+            for comment_text in comments:
+                InstagramComment.objects.create(post=post_obj, text=comment_text)
 
 class InstagramPost(models.Model):
-    profile = models.ForeignKey(InstagramProfile, 
-            on_delete=models.CASCADE,
-            verbose_name = "Профиль"
-    )
-    image_url = models.URLField(
-        verbose_name = "Фотография"
-    )
-    description = models.TextField(
-        verbose_name = "Описание",
-        blank = True, null = True
-    )
-    created_at = models.DateTimeField(
-        verbose_name = "Дата создания",
-    )
-    post_url = models.URLField(
-        verbose_name="Ссылка на публикацию",
-        blank=True, null=True
-    )
+    profile = models.ForeignKey(InstagramProfile, on_delete=models.CASCADE)
+    post_url = models.URLField()
+    image_url = models.URLField(blank=True, null=True)
+    description = models.TextField(blank=True)  # Поле description больше не NULL
+    created_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.description
     class Meta:
-        verbose_name = "Публикация"
+        verbose_name = "Публикации"
         verbose_name_plural = "Публикации"
-        ordering = ['-created_at']
+class InstagramComment(models.Model):
+    post = models.ForeignKey(InstagramPost, related_name='comments', on_delete=models.CASCADE)
+    text = models.TextField()
+    created_at = models.DateTimeField(default=timezone.now)
+    def __str__(self):
+        return self.post
+    class Meta:
+        verbose_name = "Комментарии"
+        verbose_name_plural = "Комментарии"
+        
