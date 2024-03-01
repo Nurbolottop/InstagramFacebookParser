@@ -13,13 +13,19 @@ class InstagramProfile(models.Model):
     def _parse_instagram_data(self):
         self.username = self.url.split("/")[-2]  # Извлечение имени пользователя из URL
 
+        # Инициализация Instaloader с аутентификацией
         L = instaloader.Instaloader()
+        
+        # Указание логина и пароля для аутентификации в Instagram
+        L.context.login('shus_dv', 'erk1nbaew')
+        
+        # Загрузка профиля
         profile = instaloader.Profile.from_username(L.context, self.username)
 
-        # Сначала сохраняем профиль Instagram
-        super().save()
+        # Сохранение профиля
+        self.save()
 
-        # Парсинг и сохранение 10 последних постов
+        # Парсинг и сохранение последних 10 постов
         posts_to_create = []
         for post in profile.get_posts():
             if len(posts_to_create) >= 10:
@@ -31,7 +37,6 @@ class InstagramProfile(models.Model):
                 created_at=post.date.isoformat(),
             ))
         InstagramPost.objects.bulk_create(posts_to_create)
-
 class InstagramPost(models.Model):
     profile = models.ForeignKey(InstagramProfile, 
             on_delete=models.CASCADE,

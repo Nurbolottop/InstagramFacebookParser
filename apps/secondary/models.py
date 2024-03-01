@@ -7,7 +7,8 @@ class InstagramPost(models.Model):
     image_url = models.URLField(blank=True, null=True)
     description = models.TextField(blank=True)
     created_at = models.DateTimeField(default=timezone.now)
-
+    def __str__(self):
+        return self.description
     def save(self, *args, **kwargs):
         if not self.pk:  # Если объект сохраняется впервые
             loader = instaloader.Instaloader()
