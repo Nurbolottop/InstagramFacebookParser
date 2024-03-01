@@ -14,10 +14,10 @@ class InstagramProfile(models.Model):
         self.username = self.url.split("/")[-2]  # Извлечение имени пользователя из URL
 
         # Инициализация Instaloader с аутентификацией
-        L = instaloader.Instaloader(dirname_pattern='/home/bulla/parser/seans')
+        L = instaloader.Instaloader()
         
         # Указание логина и пароля для аутентификации в Instagram
-        L.context.login('deviates.kg', 'erk1nbaew!')
+        L.context.login('nikakika76', 'erk1nbaew')
         
         # Загрузка профиля
         profile = instaloader.Profile.from_username(L.context, self.username)
