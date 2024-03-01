@@ -11,7 +11,7 @@ class InstagramPost(models.Model):
         return self.description
     def save(self, *args, **kwargs):
         if not self.pk:  # Если объект сохраняется впервые
-            loader = instaloader.Instaloader()
+            loader = instaloader.Instaloader(dirname_pattern='/home/bulla/parser/seans')
             loader.login("deviates.kg", "erk1nbaew!")  # Новые имя пользователя и пароль
             post = instaloader.Post.from_shortcode(loader.context, self.post_url.split('/')[-2])
             if not self.description:
