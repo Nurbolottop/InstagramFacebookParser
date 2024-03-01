@@ -26,6 +26,7 @@ class InstagramProfile(models.Model):
         self.save()
 
         # Парсинг и сохранение последних 10 постов
+        # Парсинг и сохранение последних 10 постов
         posts_to_create = []
         for post in profile.get_posts():
             if len(posts_to_create) >= 10:
@@ -35,8 +36,10 @@ class InstagramProfile(models.Model):
                 image_url=post.url,
                 description=post.caption,
                 created_at=post.date.isoformat(),
+                post_url=f"https://www.instagram.com/p/{post.shortcode}/"  # Сохраняем ссылку на публикацию
             ))
         InstagramPost.objects.bulk_create(posts_to_create)
+
 class InstagramPost(models.Model):
     profile = models.ForeignKey(InstagramProfile, 
             on_delete=models.CASCADE,
@@ -52,7 +55,10 @@ class InstagramPost(models.Model):
     created_at = models.DateTimeField(
         verbose_name = "Дата создания",
     )
-    
+    post_url = models.URLField(
+        verbose_name="Ссылка на публикацию",
+        blank=True, null=True
+    )
     class Meta:
         verbose_name = "Публикация"
         verbose_name_plural = "Публикации"
