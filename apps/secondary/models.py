@@ -7,7 +7,6 @@ class InstagramPost(models.Model):
     image_url = models.URLField(blank=True, null=True)
     description = models.TextField(blank=True)
     created_at = models.DateTimeField(default=timezone.now)
-    comments = models.TextField(blank=True)
 
     def save(self, *args, **kwargs):
         if not self.pk:  # Если объект сохраняется впервые
@@ -18,8 +17,17 @@ class InstagramPost(models.Model):
                 self.description = post.caption
             if not self.created_at:
                 self.created_at = post.date_utc
-            if not self.comments:
-                self.comments = '\n'.join([comment.text for comment in post.get_comments()])
             if not self.image_url:
                 self.image_url = post.url
-        super().save(*args, **kwargs)
+            
+            super().save(*args, **kwargs)  # Сначала сохраняем объект, чтобы у него был доступ к первичному ключу
+            comments = [comment.text for comment in post.get_comments()]
+            for comment_text in comments:
+                InstagramComment.objects.create(post=self, text=comment_text)
+        else:
+            super().save(*args, **kwargs)
+
+class InstagramComment(models.Model):
+    post = models.ForeignKey(InstagramPost, related_name='comments', on_delete=models.CASCADE)
+    text = models.TextField()
+    created_at = models.DateTimeField(default=timezone.now)
