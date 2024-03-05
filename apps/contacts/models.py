@@ -19,7 +19,7 @@ class InstagramProfile(models.Model):
 
         
         # Указание логина и пароля для аутентификации в Instagram
-        L.context.login('saitbekovvs', 'kuma2005')
+        L.context.login('irooelahdgd', 'kuma2005')
         
         # Загрузка профиля
         profile = instaloader.Profile.from_username(L.context, self.username)
