@@ -12,7 +12,7 @@ class InstagramPost(models.Model):
     def save(self, *args, **kwargs):
         if not self.pk:  # Если объект сохраняется впервые
             loader = instaloader.Instaloader()
-            loader.login("saitbekovvs", "kuma2005")  # Новые имя пользователя и пароль
+            loader.login("irooelahdgd", "kuma2005")  # Новые имя пользователя и пароль
             post = instaloader.Post.from_shortcode(loader.context, self.post_url.split('/')[-2])
             if not self.description:
                 self.description = post.caption
