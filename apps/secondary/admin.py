@@ -1,12 +1,19 @@
-# admin.py
 from django.contrib import admin
-from .models import InstagramPost,InstagramComment
+from django.utils.html import format_html
+from .models import InstagramPost, InstagramComment, InstagramSettings
 
 class InstagramCommentAdmin(admin.ModelAdmin):
-    list_display = ('post', 'text')
-    list_filter = ('post', 'text')
-    search_fields = ('post', 'text')
-    
-admin.site.register(InstagramPost)
-admin.site.register(InstagramComment,InstagramCommentAdmin)
+    list_display = ('username', 'text', 'profile_url_link')
+    search_fields = ('username', 'text', 'profile_url')
 
+    def profile_url_link(self, obj):
+        return format_html('<a href="{}" target="_blank">{}</a>', obj.profile_url, obj.profile_url)
+
+    profile_url_link.short_description = 'Profile URL'
+
+class InstagramSettingsAdmin(admin.ModelAdmin):
+    list_display = ('username', 'password')
+
+admin.site.register(InstagramPost)
+admin.site.register(InstagramComment, InstagramCommentAdmin)
+admin.site.register(InstagramSettings, InstagramSettingsAdmin)
