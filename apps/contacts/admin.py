@@ -16,7 +16,7 @@ class InstagramProfileFilterAdmin(admin.ModelAdmin):
     username_with_icon.short_description = 'Username'
 
     def get_comment_count(self, obj):
-        return obj.instagrampost_set.annotate(comment_count=models.Count('comments')).aggregate(total_comments=models.Sum('comment_count'))['total_comments']
+        return obj.profile_posts.annotate(comment_count=models.Count('comments')).aggregate(total_comments=models.Sum('comment_count'))['total_comments']
 
     get_comment_count.short_description = 'Колличество комментариев'
 
@@ -37,6 +37,7 @@ class InstagramCommentAdmin(admin.ModelAdmin):
 
 class InstagramPostFilterAdmin(admin.ModelAdmin):
     list_display = ('profile', 'description', 'created_at')
+    list_filter = ('profile', )
     search_fields = ('profile', 'description', 'created_at')
     readonly_fields = ('profile', 'description', 'created_at',)
 
