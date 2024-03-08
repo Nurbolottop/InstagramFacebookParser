@@ -178,3 +178,6 @@ EMAIL_HOST = 'smtp.gmail.com'  # Адрес SMTP сервера Gmail
 EMAIL_PORT = 587  # Порт для подключения к SMTP серверу Gmail
 EMAIL_HOST_USER = 'bullabratan@gmail.com'
 EMAIL_HOST_PASSWORD = 'spoc twnz dgex hjxr'
+
+INSTAGRAM_USERNAME = os.environ.get('INSTAGRAM_USERNAME')
+INSTAGRAM_PASSWORD = os.environ.get('INSTAGRAM_PASSWORD')
