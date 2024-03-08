@@ -21,6 +21,7 @@ local_settings.py
 *.so
 
 # Distribution / packaging
+.env
 .Python
 build/
 develop-eggs/

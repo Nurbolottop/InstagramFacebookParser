@@ -3,8 +3,13 @@ from django.utils import timezone
 import instaloader
 
 class InstagramProfile(models.Model):
-    username = models.CharField(max_length=255, unique=True, blank=True)
-    url = models.URLField(unique=True)
+    username = models.CharField(
+        max_length=255, verbose_name="Профиль Instagram",
+        unique=True, blank=True
+    )
+    url = models.URLField(
+        unique=True
+    )
     instagram_username = models.CharField(max_length=255, blank=True)  # Имя пользователя Instagram
     instagram_password = models.CharField(max_length=255, blank=True)  # Пароль пользователя Instagram
 
