@@ -40,8 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'apps.base',
-    'apps.secondary',
     'apps.contacts',
     'apps.telegram_bot'
 ]
@@ -180,3 +178,14 @@ EMAIL_HOST = 'smtp.gmail.com'  # Адрес SMTP сервера Gmail
 EMAIL_PORT = 587  # Порт для подключения к SMTP серверу Gmail
 EMAIL_HOST_USER = 'bullabratan@gmail.com'
 EMAIL_HOST_PASSWORD = 'spoc twnz dgex hjxr'
+
+INSTAGRAM_USERNAME = os.environ.get('INSTAGRAM_USERNAME')
+INSTAGRAM_PASSWORD = os.environ.get('INSTAGRAM_PASSWORD')
+
+# Celery Configuration
+# CELERY_BROKER_URL = 'amqp://guest:guest@localhost'  # Используйте вашего брокера сообщений, например, RabbitMQ или Redis
+# CELERY_RESULT_BACKEND = 'db+sqlite:///results.sqlite'  # Конфигурация backend для хранения результатов задач
+# CELERY_ACCEPT_CONTENT = ['application/json']
+# CELERY_TASK_SERIALIZER = 'json'
+# CELERY_RESULT_SERIALIZER = 'json'
+# CELERY_TIMEZONE = 'UTC'

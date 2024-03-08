@@ -19,10 +19,11 @@ from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
 
+from apps.contacts.views import profile_data
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include("apps.base.urls")),
-    path('', include("apps.secondary.urls")),
     path('', include("apps.contacts.urls")),
+    path('profile-data/', profile_data, name='profile-data'),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
