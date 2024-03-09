@@ -3,10 +3,32 @@ from django.utils import timezone
 from django.conf import settings
 from django.core.files.base import ContentFile
 from django.core.files.temp import NamedTemporaryFile
-import instaloader, requests
+from urllib.parse import urlparse, parse_qs
+import instaloader, requests, os
 
+
+class InstagramLogin(models.Model):
+    login = models.CharField(
+        max_length=255, verbose_name="Логин"
+    )
+    password = models.CharField(
+        max_length=255, verbose_name="Пароль"
+    )
+
+    def __str__(self):
+        return f"{self.login} {self.password}"
+    
+    class Meta:
+        verbose_name = "Логин для входа"
+        verbose_name_plural = "Логины для входов"
 
 class InstagramProfile(models.Model):
+    authorization = models.ForeignKey(
+        InstagramLogin, on_delete=models.SET_NULL,
+        related_name="authorization_profile",
+        verbose_name="Авторазация аккаунта",
+        null=True
+    )
     username = models.CharField(
         max_length=255, verbose_name="Профиль Instagram",
         help_text="https://www.instagram.com/codex_kg/",
@@ -32,10 +54,36 @@ class InstagramProfile(models.Model):
 
     def save(self, *args, **kwargs):
         creating = self._state.adding
-        super().save(*args, **kwargs)  # Сначала сохраняем профиль
-        if creating:  # Если это создание нового профиля
-            from apps.contacts.tasks import add_instagram_profile_and_posts  # Импорт перенесён сюда
-            add_instagram_profile_and_posts.delay(self.id)  # Вызов задачи в асинхронном режиме
+        if creating:
+            # Извлекаем username из URL
+            self.username = self.clean_url()
+
+            # Если username не получен, выходим из функции сохранения
+            if not self.username:
+                raise ValueError('Не удалось извлечь username из предоставленного URL.')
+
+        super().save(*args, **kwargs)
+
+        # Только если это новый объект, запускаем асинхронное обновление данных
+        if creating:
+            from apps.contacts.tasks import add_instagram_profile_and_posts
+            add_instagram_profile_and_posts.delay(self.id)
+
+    def clean_url(self):
+        """
+        Преобразует URL в стандартный формат и извлекает username.
+        """
+        parsed_url = urlparse(self.url)
+
+        # Очищаем параметры запроса и фрагменты URL, если они есть
+        url_cleaned = parsed_url._replace(query="", fragment="").geturl()
+
+        # Проверяем, содержит ли путь имя пользователя Instagram
+        if parsed_url.netloc == 'www.instagram.com' and parsed_url.path:
+            path_segments = parsed_url.path.strip("/").split('/')
+            # Берем только первый сегмент пути как потенциальное имя пользователя
+            return path_segments[0] if path_segments else ''
+        return ''
 
     def _parse_instagram_data(self):
         self.username = self.url.split("/")[-2]  # Extracting the username from URL
@@ -44,8 +92,8 @@ class InstagramProfile(models.Model):
         L = instaloader.Instaloader()
 
         # Providing login credentials for Instagram authentication
-        if settings.INSTAGRAM_USERNAME and settings.INSTAGRAM_PASSWORD:
-            L.context.login(settings.INSTAGRAM_USERNAME, settings.INSTAGRAM_PASSWORD)
+        if self.authorization.login and self.authorization.password:
+            L.context.login(self.authorization.login, self.authorization.password)
         
         # Loading the profile
         profile = instaloader.Profile.from_username(L.context, self.username)
@@ -73,7 +121,9 @@ class InstagramProfile(models.Model):
 
         # Parsing and saving the last 10 posts
         posts_to_create = []
+        # Получаем только последние 10 постов
         for post in profile.get_posts():
+            posts_to_create.append(post)
             if len(posts_to_create) >= 10:
                 break
             
@@ -99,6 +149,14 @@ class InstagramProfile(models.Model):
                     created_instagram=comment.created_at_utc,  # Set the Instagram creation date for the comment
                     created_at=timezone.now()  # Set the current time as the add date for the comment
                 )
+
+    def delete(self, *args, **kwargs):
+        # Если у объекта есть изображение, удаляем его
+        if self.profile_image:
+            if os.path.isfile(self.profile_image.path):
+                os.remove(self.profile_image.path)
+        super(InstagramProfile, self).delete(*args, **kwargs)
+
 
     class Meta:
         verbose_name = "Профиль"
