@@ -4,7 +4,7 @@ from django.conf import settings
 from django.core.files.base import ContentFile
 from django.core.files.temp import NamedTemporaryFile
 from urllib.parse import urlparse, parse_qs
-import instaloader, requests
+import instaloader, requests, os
 
 
 class InstagramLogin(models.Model):
@@ -149,6 +149,14 @@ class InstagramProfile(models.Model):
                     created_instagram=comment.created_at_utc,  # Set the Instagram creation date for the comment
                     created_at=timezone.now()  # Set the current time as the add date for the comment
                 )
+
+    def delete(self, *args, **kwargs):
+        # Если у объекта есть изображение, удаляем его
+        if self.profile_image:
+            if os.path.isfile(self.profile_image.path):
+                os.remove(self.profile_image.path)
+        super(InstagramProfile, self).delete(*args, **kwargs)
+
 
     class Meta:
         verbose_name = "Профиль"

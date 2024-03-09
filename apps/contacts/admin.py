@@ -33,12 +33,12 @@ class InstagramProfileFilterAdmin(admin.ModelAdmin):
     username_with_icon.short_description = 'Username'
 
     def get_post_count(self, obj):
-        return obj.profile_posts.count()  # Считаем количество связанных постов с профилем
+        return obj.profile_posts.count() or 0  # Считаем количество связанных постов с профилем
 
     get_post_count.short_description = 'Количество постов'  # Описание для колонки
 
     def get_comment_count(self, obj):
-        return obj.profile_posts.annotate(comment_count=models.Count('comments')).aggregate(total_comments=models.Sum('comment_count'))['total_comments']
+        return obj.profile_posts.annotate(comment_count=models.Count('comments')).aggregate(total_comments=models.Sum('comment_count'))['total_comments'] or 0
 
     get_comment_count.short_description = 'Колличество комментариев'
 
