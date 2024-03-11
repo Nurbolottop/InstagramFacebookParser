@@ -44,6 +44,14 @@ class InstagramProfile(models.Model):
         upload_to='profile_images/',
         blank=True, null=True
     )
+    count_followers = models.IntegerField(
+        verbose_name="Количество подписчиков",
+        default=0, blank=True, null=True
+    )
+    count_posts = models.IntegerField(
+        verbose_name="Количество постов",
+        default=0, blank=True, null=True
+    )
     created = models.DateTimeField(
         auto_now_add=True,
         verbose_name="Дата создания"
@@ -97,6 +105,10 @@ class InstagramProfile(models.Model):
         
         # Loading the profile
         profile = instaloader.Profile.from_username(L.context, self.username)
+        # Обновляем информацию о профиле
+        self.count_followers = profile.followers
+        self.count_posts = profile.mediacount
+        self.save()
 
         # Downloading the profile picture
         if profile.profile_pic_url:
@@ -135,6 +147,8 @@ class InstagramProfile(models.Model):
                 image_url=post.url,
                 description=description,
                 created_instagram=post.date_utc,  # Set the Instagram creation date
+                count_likes=post.likes,
+                count_views=post.video_view_count or 0,
                 created_at=timezone.now()  # Set the current time as the add date
             )
             post_obj.save()  # Saving each post separately
@@ -178,6 +192,14 @@ class InstagramPost(models.Model):
     description = models.TextField(
         verbose_name="Описание",
         blank=True, default="Описание отсутствует"
+    )
+    count_likes = models.IntegerField(
+        verbose_name="Количество лайков",
+        default=0, blank=True, null=True
+    )
+    count_views = models.IntegerField(
+        verbose_name="Количество просмотров",
+        default=0, blank=True, null=True
     )
     created_instagram = models.DateTimeField(
         verbose_name="Дата создания поста",

@@ -19,9 +19,9 @@ class InstagramLoginAdmin(admin.ModelAdmin):
     search_fields = ('login', 'password')
 
 class InstagramProfileFilterAdmin(admin.ModelAdmin):
-    list_display = ('username_with_icon', 'get_post_count', 'get_comment_count', 'created')  # Добавляем новое поле get_comment_count в list_display
+    list_display = ('username_with_icon', 'get_post_count', 'get_comment_count', 'count_followers', 'created')  # Добавляем новое поле get_comment_count в list_display
     search_fields = ('username',)
-    readonly_fields = ('username', 'profile_image')
+    readonly_fields = ('username', 'profile_image', 'count_followers', 'count_posts')
     inlines = (InstagramPostTabularInline, )
 
     def username_with_icon(self, obj):
@@ -47,6 +47,7 @@ class InstagramCommentAdmin(admin.ModelAdmin):
     # list_display = ('username_with_icon', 'text', 'profile_url_link')
     list_display = ('short_post', 'get_post_url', 'username', 'text', 'profile_url_link', 'created_instagram')
     search_fields = ('username', 'text', 'profile_url')
+    ordering = ('-created_instagram', )
 
     # def username_with_icon(self, obj):
     #     icon_path = settings.STATIC_URL + 'images/profilejpg'  # Путь к изображению
@@ -75,11 +76,20 @@ class InstagramCommentAdmin(admin.ModelAdmin):
     get_post_url.short_description = "Ссылка на пост"
 
 class InstagramPostFilterAdmin(admin.ModelAdmin):
-    list_display = ('profile', 'description', 'created_instagram')
+    list_display = ('profile', 'description', 'count_likes', 'get_post_url', 'count_views', 'created_instagram')
     list_filter = ('profile', )
     search_fields = ('profile', 'description', 'created_instagram', 'created_at')
     readonly_fields = ('profile', 'description', 'created_instagram', 'created_at',)
     inlines = (InstagramCommentTabularInline, )
+
+    def get_post_url(self, obj):
+        """
+        Метод для отображения URL связанного поста.
+        """
+        # return obj.post.post_url
+        return format_html('<a href="{}" target="_blank">{}</a>', obj.post_url, obj.post_url)
+
+    get_post_url.short_description = "Ссылка на пост"
 
 # admin.site.register(InstagramProfile, InstagramProfileFilterAdmin)
 # admin.site.register(InstagramComment, InstagramCommentAdmin)
