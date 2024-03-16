@@ -16,7 +16,7 @@ class InstagramLogin(models.Model):
     )
 
     def __str__(self):
-        return f"{self.login} {self.password}"
+        return f"Аккаунт {self.login}"
     
     class Meta:
         verbose_name = "Логин для входа"
@@ -29,6 +29,7 @@ class InstagramProfile(models.Model):
         verbose_name="Авторазация аккаунта",
         null=True
     )
+    instagram_id = models.CharField(max_length=255, verbose_name="Instagram ID", blank=True, null=True)
     username = models.CharField(
         max_length=255, verbose_name="Профиль Instagram",
         help_text="https://www.instagram.com/codex_kg/",
@@ -106,6 +107,7 @@ class InstagramProfile(models.Model):
         # Loading the profile
         profile = instaloader.Profile.from_username(L.context, self.username)
         # Обновляем информацию о профиле
+        self.instagram_id = profile.userid
         self.count_followers = profile.followers
         self.count_posts = profile.mediacount
         self.save()
@@ -143,6 +145,7 @@ class InstagramProfile(models.Model):
             description = post.caption if post.caption else "Описание отсутствует"
             post_obj = InstagramPost(
                 profile=self,
+                instagram_id=post.mediaid,
                 post_url=f"https://www.instagram.com/p/{post.shortcode}/",
                 image_url=post.url,
                 description=description,
@@ -157,6 +160,7 @@ class InstagramProfile(models.Model):
             for comment in post.get_comments():
                 InstagramComment.objects.create(
                     post=post_obj,
+                    instagram_id=comment.id,
                     text=comment.text,
                     username=comment.owner.username,
                     profile_url=f"https://www.instagram.com/{comment.owner.username}/",
@@ -182,6 +186,7 @@ class InstagramPost(models.Model):
         related_name="profile_posts",
         verbose_name="Профиль"
     )
+    instagram_id = models.CharField(max_length=255, verbose_name="Instagram Post ID", blank=True, null=True)
     post_url = models.URLField(
         verbose_name="Ссылка на пост"
     )
@@ -223,6 +228,7 @@ class InstagramComment(models.Model):
         related_name='comments',
         verbose_name="Пост"
     )
+    instagram_id = models.CharField(max_length=255, verbose_name="Instagram Comment ID", blank=True, null=True)
     text = models.TextField(
         verbose_name="Текст"
     )

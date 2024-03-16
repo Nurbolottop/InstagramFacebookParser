@@ -40,8 +40,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    #apps
     'apps.contacts',
-    'apps.telegram_bot'
+    'apps.telegram_bot',
+
+    #celery
+    'django_celery_beat',
 ]
 
 MIDDLEWARE = [
@@ -186,3 +190,10 @@ EMAIL_HOST_PASSWORD = 'spoc twnz dgex hjxr'
 # CELERY_TASK_SERIALIZER = 'json'
 # CELERY_RESULT_SERIALIZER = 'json'
 # CELERY_TIMEZONE = 'UTC'
+
+CELERY_BEAT_SCHEDULE = {
+    'update_instagram_data_every_minute': {
+        'task': 'apps.contacts.tasks.update_instagram_data',  # Правильный путь к задаче
+        'schedule': 60.0,  # Запуск каждую минуту
+    },
+}
