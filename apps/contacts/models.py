@@ -107,7 +107,7 @@ class InstagramProfile(models.Model):
         # Loading the profile
         profile = instaloader.Profile.from_username(L.context, self.username)
         # Обновляем информацию о профиле
-        self.instagram_id = profile.userid
+        self.instagram_id = str(profile.userid)  # Преобразуем ID в строку, если он числовой
         self.count_followers = profile.followers
         self.count_posts = profile.mediacount
         self.save()
@@ -116,57 +116,44 @@ class InstagramProfile(models.Model):
         if profile.profile_pic_url:
             response = requests.get(profile.profile_pic_url)
             if response.status_code == 200:
-                # Create a temporary file for the downloaded image
-                img_temp = NamedTemporaryFile(delete=False)  # delete=False is important here
+                img_temp = NamedTemporaryFile(delete=True)  # Используем delete=True для автоудаления
                 img_temp.write(response.content)
                 img_temp.flush()
-                
-                # Reopen the temporary file to read
                 img_temp.seek(0)
-                
-                # Save the image in the model field
                 self.profile_image.save(f"profile_{self.username}.jpg", ContentFile(img_temp.read()), save=True)
-                
-                # Now that we've saved the image in Django, we can close and delete the temp file
-                img_temp.close()
 
-        # Saving the profile
-        super().save()
-
-        # Parsing and saving the last 10 posts
-        posts_to_create = []
-        # Получаем только последние 10 постов
+        # Parsing and saving/updating the last 10 posts
         for post in profile.get_posts():
-            posts_to_create.append(post)
-            if len(posts_to_create) >= 10:
-                break
-            
-            # If post.caption is None or an empty string, set description to "Описание отсутствует"
-            description = post.caption if post.caption else "Описание отсутствует"
-            post_obj = InstagramPost(
-                profile=self,
-                instagram_id=post.mediaid,
-                post_url=f"https://www.instagram.com/p/{post.shortcode}/",
-                image_url=post.url,
-                description=description,
-                created_instagram=post.date_utc,  # Set the Instagram creation date
-                count_likes=post.likes,
-                count_views=post.video_view_count or 0,
-                created_at=timezone.now()  # Set the current time as the add date
+            post_obj, created = InstagramPost.objects.update_or_create(
+                instagram_id=str(post.mediaid),  # Убедитесь, что instagram_id — это строка
+                defaults={
+                    'profile': self,
+                    'post_url': f"https://www.instagram.com/p/{post.shortcode}/",
+                    'image_url': post.url,
+                    'description': post.caption if post.caption else "Описание отсутствует",
+                    'created_instagram': post.date_utc,
+                    'count_likes': post.likes,
+                    'count_views': post.video_view_count or 0,
+                    'created_at': timezone.now(),
+                }
             )
-            post_obj.save()  # Saving each post separately
 
-            # Getting and saving comments for each post
+            # Получаем и сохраняем/обновляем комментарии к каждому посту
             for comment in post.get_comments():
-                InstagramComment.objects.create(
-                    post=post_obj,
-                    instagram_id=comment.id,
-                    text=comment.text,
-                    username=comment.owner.username,
-                    profile_url=f"https://www.instagram.com/{comment.owner.username}/",
-                    created_instagram=comment.created_at_utc,  # Set the Instagram creation date for the comment
-                    created_at=timezone.now()  # Set the current time as the add date for the comment
+                InstagramComment.objects.update_or_create(
+                    instagram_id=str(comment.id),  # Убедитесь, что instagram_id — это строка
+                    defaults={
+                        'post': post_obj,
+                        'text': comment.text,
+                        'username': comment.owner.username,
+                        'profile_url': f"https://www.instagram.com/{comment.owner.username}/",
+                        'created_instagram': comment.created_at_utc,
+                        'created_at': timezone.now(),
+                    }
                 )
+
+            if len(InstagramPost.objects.filter(profile=self)) >= 10:
+                break  # Прекращаем обработку после получения и обработки 10 постов
 
     def delete(self, *args, **kwargs):
         # Если у объекта есть изображение, удаляем его
