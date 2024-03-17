@@ -1,10 +1,12 @@
 from django.db import models
 from django.utils import timezone
-from django.conf import settings
 from django.core.files.base import ContentFile
-from django.core.files.temp import NamedTemporaryFile
-from urllib.parse import urlparse, parse_qs
-import instaloader, requests, os
+from django.contrib import messages
+from urllib.parse import urlparse, unquote
+from django.core.exceptions import SuspiciousFileOperation
+import instaloader, requests, os, hashlib
+
+from apps.contacts.tasks import add_instagram_profile_and_posts
 
 
 class InstagramLogin(models.Model):
@@ -43,7 +45,8 @@ class InstagramProfile(models.Model):
     profile_image = models.ImageField(
         verbose_name="Фотография профиля",
         upload_to='profile_images/',
-        blank=True, null=True
+        blank=True, null=True,
+        max_length=500  # Увеличиваем максимальную длину
     )
     count_followers = models.IntegerField(
         verbose_name="Количество подписчиков",
@@ -78,6 +81,16 @@ class InstagramProfile(models.Model):
             from apps.contacts.tasks import add_instagram_profile_and_posts
             add_instagram_profile_and_posts.delay(self.id)
 
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        try:
+            # Предполагается, что some_task_that_uses_instaloader - это ваша задача Celery,
+            # которая выполняет вход в Instaloader
+            add_instagram_profile_and_posts.delay(obj.id)
+        except instaloader.exceptions.ConnectionException as e:
+            # Сюда мы попадаем, если было поймано исключение при выполнении задачи
+            messages.error(request, f"Произошла ошибка при входе: {e}")
+
     def clean_url(self):
         """
         Преобразует URL в стандартный формат и извлекает username.
@@ -93,6 +106,23 @@ class InstagramProfile(models.Model):
             # Берем только первый сегмент пути как потенциальное имя пользователя
             return path_segments[0] if path_segments else ''
         return ''
+
+    def _save_profile_image(self, profile_pic_url):
+        """
+        Сохранение изображения профиля с уникальным именем файла
+        """
+        response = requests.get(profile_pic_url)
+        if response.status_code == 200:
+            # Разбираем URL на части и извлекаем путь
+            path = urlparse(unquote(profile_pic_url)).path
+            # Извлекаем расширение файла
+            file_extension = os.path.splitext(path)[1].lower()
+            # Ограничиваем расширение до 4 символов (если это необычное расширение, возможно потребуется другой подход)
+            file_extension = file_extension[:5] if file_extension.startswith('.j') else file_extension[:4]
+            # Генерируем имя файла на основе хэша URL
+            file_name = hashlib.sha256(profile_pic_url.encode('utf-8')).hexdigest()[:12]
+            full_file_name = f"{file_name}{file_extension}"
+            self.profile_image.save(full_file_name, ContentFile(response.content), save=False)
 
     def _parse_instagram_data(self):
         self.username = self.url.split("/")[-2]  # Extracting the username from URL
@@ -113,14 +143,17 @@ class InstagramProfile(models.Model):
         self.save()
 
         # Downloading the profile picture
-        if profile.profile_pic_url:
-            response = requests.get(profile.profile_pic_url)
-            if response.status_code == 200:
-                img_temp = NamedTemporaryFile(delete=True)  # Используем delete=True для автоудаления
-                img_temp.write(response.content)
-                img_temp.flush()
-                img_temp.seek(0)
-                self.profile_image.save(f"profile_{self.username}.jpg", ContentFile(img_temp.read()), save=True)
+        # Предполагается, что профиль загружен
+        new_profile_pic_url = profile.profile_pic_url
+        if new_profile_pic_url and (not self.profile_image or self._profile_image_changed(new_profile_pic_url)):
+            try:
+                self._save_profile_image(new_profile_pic_url)
+            except SuspiciousFileOperation:
+                # Если имя файла слишком длинное, логируем ошибку или принимаем меры
+                print("Ошибка при сохранении изображения: имя файла слишком длинное.")
+                
+        # Сохранить изменения в профиле
+        self.save(update_fields=['profile_image', 'count_followers', 'count_posts', 'instagram_id'])
 
         # Parsing and saving/updating the last 10 posts
         for post in profile.get_posts():
@@ -162,6 +195,19 @@ class InstagramProfile(models.Model):
                 os.remove(self.profile_image.path)
         super(InstagramProfile, self).delete(*args, **kwargs)
 
+    def _profile_image_changed(self, new_profile_pic_url):
+        """Проверка, изменилась ли фотография профиля."""
+        # Проверка по URL фотографии
+        if self.profile_image and new_profile_pic_url:
+            response = requests.get(new_profile_pic_url, stream=True)
+            if response.status_code == 200:
+                # Сравнение хэшей изображений
+                hash_new_image = hashlib.sha256(response.content).hexdigest()
+                self.profile_image.open()
+                hash_current_image = hashlib.sha256(self.profile_image.read()).hexdigest()
+                self.profile_image.close()
+                return hash_new_image != hash_current_image
+        return True
 
     class Meta:
         verbose_name = "Профиль"
@@ -242,3 +288,18 @@ class InstagramComment(models.Model):
     class Meta:
         verbose_name = "Комментарий"
         verbose_name_plural = "Комментарии"
+
+class CeleryTaskErrorLog(models.Model):
+    task_name = models.CharField(
+        max_length=255, verbose_name="Название задачи celery"
+    )
+    error_message = models.TextField(
+        verbose_name="Сообщение ошибки"
+    )
+    timestamp = models.DateTimeField(
+        verbose_name="Дата ошибки",auto_now_add=True
+    )
+    
+    class Meta:
+        verbose_name = 'Celery Логи'
+        verbose_name_plural = 'Celery Логи'

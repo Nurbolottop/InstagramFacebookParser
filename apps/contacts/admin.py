@@ -7,7 +7,7 @@ from django.template.defaultfilters import truncatechars
 from django.utils.html import format_html
 from django import forms
 
-from apps.contacts.models import InstagramLogin, InstagramProfile, InstagramPost, InstagramComment
+from apps.contacts.models import InstagramLogin, InstagramProfile, InstagramPost, InstagramComment, CeleryTaskErrorLog
 
 class InstagramPostTabularInline(admin.TabularInline):
     model = InstagramPost
@@ -105,3 +105,8 @@ class InstagramCommentAdmin(admin.ModelAdmin):
     profile_url_link.short_description = 'Ссылка на профиль'
     short_post.short_description = "Пост"
     get_post_url.short_description = "Ссылка на пост"
+
+@admin.register(CeleryTaskErrorLog)
+class CeleryTaskErrorLogAdmin(admin.ModelAdmin):
+    list_display = ('task_name', 'error_message', 'timestamp')
+    search_fields = ('task_name', 'error_message')
