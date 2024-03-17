@@ -41,6 +41,12 @@ class InstagramProfileAdmin(admin.ModelAdmin):
     search_fields = ('username',)
     readonly_fields = ('username', 'profile_image', 'count_followers', 'count_posts', 'instagram_id')
     inlines = (InstagramPostTabularInline, )
+    exclude = ('username', 'profile_image', 'count_followers', 'count_posts', 'instagram_id', 'created')  # Исключите поля, которые не должны отображаться
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj:  # если объект существует, то редактирование
+            return self.readonly_fields
+        return ()  # если объекта нет, значит это добавление нового профиля, не делаем поля доступными только для чтения
 
     def username_with_icon(self, obj):
         if obj.profile_image:
