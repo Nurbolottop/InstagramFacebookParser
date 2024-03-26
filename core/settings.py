@@ -42,8 +42,8 @@ INSTALLED_APPS = [
 
     #apps
     'apps.contacts',
-    'apps.crm',
     'apps.telegram_bot',
+    'apps.crm',
 
     #celery
     'django_celery_beat',
