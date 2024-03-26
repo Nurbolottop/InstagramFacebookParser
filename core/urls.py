@@ -22,8 +22,9 @@ from django.conf import settings
 from apps.contacts.views import profile_data
 
 urlpatterns = [
-    path('', admin.site.urls),
+    path('django/admin/', admin.site.urls),
     path('', include("apps.contacts.urls")),
+    path('admin/', include("apps.crm.urls")),
     path('profile-data/', profile_data, name='profile-data'),
 ]
 

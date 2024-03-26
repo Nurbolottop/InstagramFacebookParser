@@ -1,0 +1,44 @@
+{% extends 'crm/includes/login/homepage.html' %}
+{% load static %}
+{% block content %}
+
+    <!-- #wrapper -->
+    <div id="wrapper">
+        <!-- #page -->
+        <div id="page" class="">
+            <div class="wrap-login-page">
+                <div class="flex-grow flex flex-column justify-center gap30">
+                    <a href="index.html" id="site-logo-inner">
+                        
+                    </a>
+                    <div class="login-box">
+                        <div>
+                            <h3>Войти в аккаунт</h3>
+                            <div class="body-text">Введите имя пользователя и пароль для входа</div>
+                        </div>
+                        <form class="form-login flex flex-column gap24" method = "POST">
+                            {% csrf_token %}
+                            <fieldset class="email">
+                                <div class="body-title mb-10">имя пользователя * <span class="tf-color-1">*</span></div>
+                                <input class="flex-grow" type="text" placeholder="Введите имя пользователя" name="username"  aria-required="true" required="">
+                            </fieldset>
+                            <fieldset class="password">
+                                <div class="body-title mb-10">Пароль <span class="tf-color-1">*</span></div>
+                                <input class="password-input" type="password" placeholder="Введите пароль для входа" name="password"  aria-required="true" required="">
+                                <span class="show-pass">
+                                    <i class="icon-eye view"></i>
+                                    <i class="icon-eye-off hide"></i>
+                                </span>
+                            </fieldset>
+                            <button type="submit" class="tf-button w-full">Войти</button>
+                        </form>
+                       
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /#page -->
+    </div>
+    <!-- /#wrapper -->
+
+{% endblock %}
