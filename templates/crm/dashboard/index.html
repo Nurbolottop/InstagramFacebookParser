@@ -59,7 +59,7 @@
                                                             <div class="button-group" style="display: inline-flex; gap: 10px; align-items: center;">
 
                                                                 <a href="{% url 'add_model' app_label=model_data.app_label model_name=model_data.model_name %}" class="tf-button" style="padding: 5px 10px; height: 26px;">Добавить</a>
-                                                                <a href="#" class="tf-button" style="padding: 5px 10px; height: 26px;">Изменить</a>
+                                                                <a href="{% url 'add_model' app_label=model_data.app_label model_name=model_data.model_name %}" class="tf-button" style="padding: 5px 10px; height: 26px;">Изменить</a>
                                                             </div>
                                                         </div>
                                                         
