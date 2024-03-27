@@ -89,23 +89,6 @@ def crm_add(request, app_label, model_name):
     # Получаем название модели
     model_verbose_name = model._meta.verbose_name
 
-    # Создаем динамическую форму на основе полей модели
-    class DynamicModelForm(forms.ModelForm):
-        class Meta:
-            dynamic_model = apps.get_model(app_label, model_name)
-            model = dynamic_model
-            fields = '__all__'
-
-    # Если форма была отправлена, обрабатываем данные
-    if request.method == 'POST':
-        form = DynamicModelForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('crm_index')
-    else:
-        form = DynamicModelForm()
-    
-    ###
     # Получаем объект приложения Django
     app_name = 'contacts'  # Замените 'your_app_name' на название вашего приложения
     app_config = apps.get_app_config(app_name)
@@ -129,6 +112,25 @@ def crm_add(request, app_label, model_name):
         }
         models_data.append(model_data)
 
+    # Создаем динамическую форму на основе полей модели
+    class DynamicModelForm(forms.ModelForm):
+        class Meta:
+            dynamic_model = apps.get_model(app_label, model_name)
+            model = dynamic_model
+            fields = '__all__'
+
+    model = apps.get_model(app_label, model_name)
+
+    # Если форма была отправлена, обрабатываем данные
+    if request.method == 'POST':
+        form = DynamicModelForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            print(models_data)
+            return redirect('crm_detail', model._meta.app_label, model._meta.model_name)
+    else:
+        form = DynamicModelForm()
+    
     # Render the template with the model verbose name
     return render(request, 'crm/add_page/add-product.html', locals())
 
