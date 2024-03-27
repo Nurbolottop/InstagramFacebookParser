@@ -23,8 +23,8 @@ from django.contrib.auth.views import LogoutView
 
 urlpatterns = [
     path('django/admin/', admin.site.urls),
-    path('', include("apps.contacts.urls")),
-    path('admin/', include("apps.crm.urls")),
+    path('contacts/', include("apps.contacts.urls")),
+    path('', include("apps.crm.urls")),
     path('profile-data/', profile_data, name='profile-data'),
     path('logout/', LogoutView.as_view(next_page = "crm_index"), name="logout"),
     
