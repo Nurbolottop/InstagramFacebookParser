@@ -25,8 +25,7 @@
                                                 <li>
                                                     <div class="body-title">Название</div>
                                                 </li>    
-                                                {% comment %}<li
-                                                    >
+                                                {% comment %}<li>
                                                         <div class="body-title">Product ID</div>
                                                     </li>
                                                     <li>
@@ -56,7 +55,7 @@
                                                         {% comment %}<img src="{% static 'crm/images/products/6.png' %}" alt="">{% endcomment %}
                                                     <div class="flex items-center justify-between flex-grow">
                                                         <div class="name">
-                                                            <a href="product-list.html" class="body-text" style="margin-right: 70%;">{{ model_data.name }}</a>
+                                                            <a href="{% url 'crm_detail' app_label=model_data.app_label model_name=model_data.model_name %}" class="body-text" style="margin-right: 70%;">{{ model_data.name }}</a>
                                                             <div class="button-group" style="display: inline-flex; gap: 10px; align-items: center;">
 
                                                                 <a href="{% url 'add_model' app_label=model_data.app_label model_name=model_data.model_name %}" class="tf-button" style="padding: 5px 10px; height: 26px;">Добавить</a>

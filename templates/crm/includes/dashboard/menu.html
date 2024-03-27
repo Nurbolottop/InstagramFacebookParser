@@ -30,7 +30,7 @@
                     <ul class="sub-menu">
                         {% for model_data in models_data %}
                         <li class="sub-menu-item">
-                            <a href="model-list.html" class=""> <!-- Замените 'model-list.html' на URL, соответствующий вашему приложению -->
+                            <a href="{% url 'crm_detail' app_label=model_data.app_label model_name=model_data.model_name %}" class=""> <!-- Замените 'model-list.html' на URL, соответствующий вашему приложению -->
                                 <div class="text">{{ model_data.name }}</div> <!-- Выводим название модели -->
                             </a>
                         </li>
