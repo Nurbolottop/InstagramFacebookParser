@@ -4,6 +4,7 @@ from django.contrib.auth import login, authenticate
 from django.shortcuts import render
 from django.contrib.auth.decorators import permission_required
 from django.http import HttpResponseForbidden, Http404
+from django.contrib import messages
 from django.apps import apps
 from django import forms
 
@@ -149,7 +150,20 @@ def crm_detail(request, app_label, model_name):
         return HttpResponseForbidden("You do not have permission to view objects of this model.")
 
     # Получаем метаданные поля модели
-    fields_info = [{'name': field.name, 'type': field.get_internal_type()} for field in model._meta.get_fields()]
+     # Получаем метаданные поля модели, учитывая только те, у которых есть verbose_name
+    fields_info = [{
+        'name': field.name,
+        'verbose_name': field.verbose_name,
+        'type': field.get_internal_type()
+    } for field in model._meta.fields if getattr(field, 'verbose_name', None)]
+
+    # Фильтруем поля, чтобы в список попали только необходимые
+    # Это могут быть поля, которые определены в вашей модели и имеют verbose_name
+    fields_info = [field for field in fields_info if field['verbose_name'] != field['name']]
+    
+    if not fields_info:
+        messages.error(request, "There are no fields with verbose_name set for this model.")
+        return redirect('some_default_route')
 
     # Создаем список для хранения данных о моделях
     models_data = [{'name': m._meta.verbose_name, 'app_label': app_label, 'model_name': m._meta.model_name} for m in apps.get_app_config(app_label).get_models()]

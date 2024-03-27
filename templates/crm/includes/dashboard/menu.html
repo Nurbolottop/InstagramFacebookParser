@@ -1,11 +1,11 @@
 {% load static %}
 <div class="section-menu-left">
     <div class="box-logo">
-      
         <div class="button-show-hide">
             <i class="icon-menu-left"></i>
         </div>
     </div>
+    
     <div class="center">
         <div class="center-item">
             <div class="center-heading">Главная Страница</div>
@@ -18,11 +18,11 @@
                 </li>
             </ul>
         </div>
+
         <div class="center-item">
             <div class="center-heading">Другие приложения</div>
             <ul class="menu-list">
-                
-                <li class="menu-item has-children">
+                <li class="menu-item has-children active">
                     <a href="javascript:void(0);" class="menu-item-button">
                         <div class="icon"><i class="icon-layers"></i></div>
                         <div class="text">{{ app_verbose_name }}</div> <!-- Выводим название приложения -->
@@ -37,59 +37,8 @@
                         {% endfor %}
                     </ul>
                 </li>
-                
-                {% comment %} <li class="menu-item has-children">
-                    <a href="javascript:void(0);" class="menu-item-button">
-                        <div class="icon"><i class="icon-box"></i></div>
-                        <div class="text">Дополнительные параметры</div>
-                    </a>
-                    <ul class="sub-menu">
-                        <li class="sub-menu-item">
-                            <a href="attributes.html" class="">
-                                <div class="text">Attributes</div>
-                            </a>
-                        </li>
-                        <li class="sub-menu-item">
-                            <a href="add-attributes.html" class="">
-                                <div class="text">Add attributes</div>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="menu-item has-children">
-                    <a href="javascript:void(0);" class="menu-item-button">
-                        <div class="icon"><i class="icon-user"></i></div>
-                        <div class="text">Пользователии Группы</div>
-                    </a>
-                    <ul class="sub-menu">
-                        <li class="sub-menu-item">
-                            <a href="all-user.html" class="">
-                                <div class="text">All user</div>
-                            </a>
-                        </li>
-                        <li class="sub-menu-item">
-                            <a href="add-new-user.html" class="">
-                                <div class="text">Add new user</div>
-                            </a>
-                        </li>
-                        <li class="sub-menu-item">
-                            <a href="login.html" class="">
-                                <div class="text">Login</div>
-                            </a>
-                        </li>
-                        <li class="sub-menu-item">
-                            <a href="sign-up.html" class="">
-                                <div class="text">Sign up</div>
-                            </a>
-                        </li>
-                    </ul>
-                </li> {% endcomment %}
-                
-                
             </ul>
         </div>
-        
-        
         
         <div class="center-item">
             <div class="center-heading">Подключите нас</div>

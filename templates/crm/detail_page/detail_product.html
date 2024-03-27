@@ -10,11 +10,11 @@
             <!-- layout-wrap -->
            <div class="layout-wrap">
                 <!-- preload -->
-                <div id="preload" class="preload-container">
+                <!-- <div id="preload" class="preload-container">
                     <div class="preloading">
                         <span></span>
                     </div>
-                </div>
+                </div> -->
                 <!-- /preload -->
                 {% include 'crm/includes/dashboard/menu.html' %}
                 <!-- section-content-right -->
@@ -32,7 +32,7 @@
                                     <h3>Данные</h3>
                                     <ul class="breadcrumbs flex items-center flex-wrap justify-start gap10">
                                         <li>
-                                            <a href="index.html"><div class="text-tiny">Dashboard</div></a>
+                                            <a href="{% url 'crm_index' %}"><div class="text-tiny">Админ панель</div></a>
                                         </li>
                                         <li>
                                             <i class="icon-chevron-right"></i>
@@ -52,12 +52,12 @@
                                 <div class="wg-box">
                                     <div class="title-box">
                                         <i class="icon-coffee"></i>
-                                        <div class="body-text">Tip search by Product ID: Each product is provided with a unique ID, which you can rely on to find the exact product you need.</div>
+                                        <div class="body-text">Данные модели</div>
                                     </div>
                                     <div class="flex items-center justify-between gap10 flex-wrap">
                                         <div class="wg-filter flex-grow">
                                             <div class="show">
-                                                <div class="text-tiny">Showing</div>
+                                                <div class="text-tiny">Показывать</div>
                                                 <div class="select">
                                                     <select class="">
                                                         <option>10</option>
@@ -65,11 +65,11 @@
                                                         <option>30</option>
                                                     </select>
                                                 </div>
-                                                <div class="text-tiny">entries</div>
+                                                <div class="text-tiny">записи</div>
                                             </div>
                                             <form class="form-search">
                                                 <fieldset class="name">
-                                                    <input type="text" placeholder="Search here..." class="" name="name" tabindex="2" value="" aria-required="true" required="">
+                                                    <input type="text" placeholder="Искать здесь..." class="" name="name" tabindex="2" value="" aria-required="true" required="">
                                                 </fieldset>
                                                 <div class="button-submit">
                                                     <button class="" type="submit"><i class="icon-search"></i></button>
@@ -78,11 +78,51 @@
                                         </div>
                                         <a class="tf-button style-1 w208" href="{% url 'add_model' app_label=model_data.app_label model_name=model_data.model_name %}"><i class="icon-plus"></i>Добавить</a>
                                     </div>
+                                    <style>
+                                        .wg-table {
+                                            display: flex;
+                                            flex-direction: column;
+                                            border: 1px solid #ccc;
+                                        }
+
+                                        .table-title {
+                                            display: flex;
+                                            border-bottom: 1px solid #ccc;
+                                            padding: 8px 16px;
+                                            font-weight: bold;
+                                        }
+
+                                        .table-title li {
+                                            flex: 1;
+                                            text-align: center;
+                                        }
+
+                                        .table-content {
+                                            display: flex;
+                                            flex-direction: column;
+                                        }
+
+                                        .product-item {
+                                            display: flex;
+                                            padding: 8px 8px;
+                                        }
+
+                                        .product-item .flex-grow {
+                                            display: flex;
+                                            flex: 1;
+                                            justify-content: space-between;
+                                        }
+
+                                        .body-text {
+                                            flex: 1;
+                                            text-align: center;
+                                        }
+                                    </style>
                                     <div class="wg-table table-product-list">
                                         <ul class="table-title flex gap20 mb-14">
                                             {% for field in fields_info %}
                                             <li>
-                                                <div class="body-title">{{ field.name }}</div>
+                                                <div class="body-title">{{ field.verbose_name }}</div>
                                             </li>   
                                             {% endfor %} 
                                         </ul>
