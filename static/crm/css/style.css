@@ -4346,7 +4346,7 @@ select.h40 {
   color: var(--Heading);
 }
 .wg-table.table-product-overview .product-item > .flex > div:nth-child(1) {
-  width: 256px;
+  width: 100%;
 }
 .wg-table.table-product-overview .product-item > .flex > div:nth-child(2) {
   width: 80px;
@@ -6309,3 +6309,22 @@ select.h40 {
 }
 
 /*# sourceMappingURL=style.css.map */
+/* Медиа-запрос для мобильных устройств */
+@media only screen and (max-width: 600px) {
+  .name {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+  }
+  
+  .body-text {
+      margin-right: 0; /* Убираем правый отступ для названия модели */
+  }
+
+  .button-group {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-top: 5px; /* Отступ между названием модели и кнопками в мобильной версии */
+  }
+}

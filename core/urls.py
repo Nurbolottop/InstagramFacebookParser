@@ -18,14 +18,16 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
-
 from apps.contacts.views import profile_data
+from django.contrib.auth.views import LogoutView
 
 urlpatterns = [
     path('django/admin/', admin.site.urls),
     path('', include("apps.contacts.urls")),
     path('admin/', include("apps.crm.urls")),
     path('profile-data/', profile_data, name='profile-data'),
+    path('logout/', LogoutView.as_view(next_page = "crm_index"), name="logout"),
+    
 ]
 
 if settings.DEBUG:

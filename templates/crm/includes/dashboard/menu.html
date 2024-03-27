@@ -1,0 +1,115 @@
+{% load static %}
+<div class="section-menu-left">
+    <div class="box-logo">
+        <a href="{% url 'crm_index' %}" id="site-logo-inner">
+            <img class="" id="logo_header" alt="" src="{% static 'crm/images/logo/logo.png' %}" data-light="{% static 'crm/images/logo/logo.png' %}" data-dark="{% static 'crm/images/logo/logo.png' %}" >
+        </a>
+        <div class="button-show-hide">
+            <i class="icon-menu-left"></i>
+        </div>
+    </div>
+    <div class="center">
+        <div class="center-item">
+            <div class="center-heading">Главная Страница</div>
+            <ul class="menu-list">
+                <li class="menu-item  active">
+                    <a href="{% url 'crm_index' %}" class="menu-item-button">
+                        <div class="icon"><i class="icon-grid"></i></div>
+                        <div class="text">Панель приборов</div>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="center-item">
+            <div class="center-heading">Другие приложения</div>
+            <ul class="menu-list">
+                
+                <li class="menu-item has-children">
+                    <a href="javascript:void(0);" class="menu-item-button">
+                        <div class="icon"><i class="icon-layers"></i></div>
+                        <div class="text">{{ app_verbose_name }}</div> <!-- Выводим название приложения -->
+                    </a>
+                    <ul class="sub-menu">
+                        {% for model_data in models_data %}
+                        <li class="sub-menu-item">
+                            <a href="model-list.html" class=""> <!-- Замените 'model-list.html' на URL, соответствующий вашему приложению -->
+                                <div class="text">{{ model_data.name }}</div> <!-- Выводим название модели -->
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </li>
+                
+                {% comment %} <li class="menu-item has-children">
+                    <a href="javascript:void(0);" class="menu-item-button">
+                        <div class="icon"><i class="icon-box"></i></div>
+                        <div class="text">Дополнительные параметры</div>
+                    </a>
+                    <ul class="sub-menu">
+                        <li class="sub-menu-item">
+                            <a href="attributes.html" class="">
+                                <div class="text">Attributes</div>
+                            </a>
+                        </li>
+                        <li class="sub-menu-item">
+                            <a href="add-attributes.html" class="">
+                                <div class="text">Add attributes</div>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="menu-item has-children">
+                    <a href="javascript:void(0);" class="menu-item-button">
+                        <div class="icon"><i class="icon-user"></i></div>
+                        <div class="text">Пользователии Группы</div>
+                    </a>
+                    <ul class="sub-menu">
+                        <li class="sub-menu-item">
+                            <a href="all-user.html" class="">
+                                <div class="text">All user</div>
+                            </a>
+                        </li>
+                        <li class="sub-menu-item">
+                            <a href="add-new-user.html" class="">
+                                <div class="text">Add new user</div>
+                            </a>
+                        </li>
+                        <li class="sub-menu-item">
+                            <a href="login.html" class="">
+                                <div class="text">Login</div>
+                            </a>
+                        </li>
+                        <li class="sub-menu-item">
+                            <a href="sign-up.html" class="">
+                                <div class="text">Sign up</div>
+                            </a>
+                        </li>
+                    </ul>
+                </li> {% endcomment %}
+                
+                
+            </ul>
+        </div>
+        
+        
+        
+        <div class="center-item">
+            <div class="center-heading">Подключите нас</div>
+            <ul class="wg-social">
+                <li>
+                    <a href="#"><i class="icon-facebook"></i></a>
+                </li>
+                <li >
+                    <a href="#"><i class="icon-youtube"></i></a>
+                </li>
+                <li>
+                    <a href="#"><i class="icon-github"></i></a>
+                </li>
+                <li>
+                    <a href="#"><i class="icon-instagram"></i></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+</div>

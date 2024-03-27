@@ -1,0 +1,257 @@
+{% load static %}
+<!-- header-dashboard -->
+<div class="header-dashboard">
+    <div class="wrap">
+        <div class="header-left">
+            <div class="button-show-hide">
+                <i class="icon-menu-left"></i>
+            </div>
+            <form class="form-search flex-grow">
+                <fieldset class="name">
+                    <input type="text" placeholder="Search here..." class="show-search" name="name" tabindex="2" value="" aria-required="true" required="">
+                </fieldset>
+                <div class="button-submit">
+                    <button class="" type="submit"><i class="icon-search"></i></button>
+                </div>
+                <div class="box-content-search" id="box-content-search">
+                    <ul class="mb-24">
+                        <li class="mb-14">
+                            <div class="body-title">Top selling product</div>
+                        </li>
+                        <li class="mb-14">
+                            <div class="divider"></div>
+                        </li>
+                        <li>
+                            <ul>
+                                <li class="product-item gap14 mb-10">
+                                    <div class="image no-bg">
+                                        <img src="{% static 'crm/images/products/17.png' %}" alt="">
+                                    </div>
+                                    <div class="flex items-center justify-between gap20 flex-grow">
+                                        <div class="name">
+                                            <a href="product-list.html" class="body-text">Dog Food Rachael Ray Nutrish®</a>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="mb-10">
+                                    <div class="divider"></div>
+                                </li>
+                                <li class="product-item gap14 mb-10">
+                                    <div class="image no-bg">
+                                        <img src="{% static 'crm/images/products/18.png' %}" alt="">
+                                    </div>
+                                    <div class="flex items-center justify-between gap20 flex-grow">
+                                        <div class="name">
+                                            <a href="product-list.html" class="body-text">Natural Dog Food Healthy Dog Food</a>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="mb-10">
+                                    <div class="divider"></div>
+                                </li>
+                                <li class="product-item gap14">
+                                    <div class="image no-bg">
+                                        <img src="{% static 'crm/images/products/19.png' %}" alt="">
+                                    </div>
+                                    <div class="flex items-center justify-between gap20 flex-grow">
+                                        <div class="name">
+                                            <a href="product-list.html" class="body-text">Freshpet Healthy Dog Food and Cat</a>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <ul class="">
+                        <li class="mb-14">
+                            <div class="body-title">Order product</div>
+                        </li>
+                        <li class="mb-14">
+                            <div class="divider"></div>
+                        </li>
+                        <li>
+                            <ul>
+                                <li class="product-item gap14 mb-10">
+                                    <div class="image no-bg">
+                                        <img src="{% static 'crm/images/products/20.png' %}" alt="">
+                                    </div>
+                                    <div class="flex items-center justify-between gap20 flex-grow">
+                                        <div class="name">
+                                            <a href="product-list.html" class="body-text">Sojos Crunchy Natural Grain Free...</a>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="mb-10">
+                                    <div class="divider"></div>
+                                </li>
+                                <li class="product-item gap14 mb-10">
+                                    <div class="image no-bg">
+                                        <img src="{% static 'crm/images/logo.png' %}" alt="">
+                                    </div>
+                                    <div class="flex items-center justify-between gap20 flex-grow">
+                                        <div class="name">
+                                            <a href="product-list.html" class="body-text">{{user.username}}</a>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="mb-10">
+                                    <div class="divider"></div>
+                                </li>
+                                <li class="product-item gap14 mb-10">
+                                    <div class="image no-bg">
+                                        <img src="{% static 'crm/images/products/22.png' %}" alt="">
+                                    </div>
+                                    <div class="flex items-center justify-between gap20 flex-grow">
+                                        <div class="name">
+                                            <a href="product-list.html" class="body-text">Mega Pumpkin Bone</a>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="mb-10">
+                                    <div class="divider"></div>
+                                </li>
+                                <li class="product-item gap14">
+                                    <div class="image no-bg">
+                                        <img src="{% static 'crm/images/products/23.png' %}" alt="">
+                                    </div>
+                                    <div class="flex items-center justify-between gap20 flex-grow">
+                                        <div class="name">
+                                            <a href="product-list.html" class="body-text">Mega Pumpkin Bone</a>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+        <div class="header-grid">
+            <div class="header-item button-dark-light">
+                <i class="icon-moon"></i>
+            </div>
+            
+            <div class="header-item button-zoom-maximize">
+                <div class="">
+                    <i class="icon-maximize"></i>
+                </div>
+            </div>
+            <div class="popup-wrap apps type-header">
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton4" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="header-item">
+                            <i class="icon-grid"></i>
+                        </span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end has-content" aria-labelledby="dropdownMenuButton4" >
+                        <li>
+                            <h6>Похожие приложения</h6>
+                        </li>
+                        <li>
+                            <ul class="list-apps">
+                                <li class="item">
+                                    <div class="image">
+                                        <img src="{% static 'crm/images/apps/item-1.png' %}" alt="">
+                                    </div>
+                                    <a href="https://online-fotoshop.ru/">
+                                        <div class="text-tiny">Photoshop</div>
+                                    </a>
+                                </li>
+                                
+                                <li class="item">
+                                    <div class="image">
+                                        <img src="{% static 'crm/images/apps/item-3.png' %}" alt="">
+                                    </div>
+                                    <a href="https://docs.google.com/spreadsheets/u/0/">
+                                        <div class="text-tiny">Sheets</div>
+                                    </a>
+                                </li>
+                                <li class="item">
+                                    <div class="image">
+                                        <img src="{% static 'crm/images/apps/item-4.png' %}" alt="">
+                                    </div>
+                                    <a href="https://mail.google.com/mail/u/0/">
+                                        <div class="text-tiny">Gmail</div>
+                                    </a>
+                                </li>
+                                <li class="item">
+                                    <div class="image">
+                                        <img src="{% static 'crm/images/apps/item-5.png' %}" alt="">
+                                    </div>
+                                    <a href="https://web.telegram.org/k/">
+                                        <div class="text-tiny">Telegram</div>
+                                    </a>
+                                </li>
+                                <li class="item">
+                                    <div class="image">
+                                        <img src="{% static 'crm/images/apps/item-6.png' %}" alt="">
+                                    </div>
+                                    <a href="https://www.youtube.com/">
+                                        <div class="text-tiny">Youtube</div>
+                                    </a>
+                                </li>
+                                
+                                <li class="item">
+                                    <div class="image">
+                                        <img src="{% static 'crm/images/apps/item-8.png' %}" alt="">
+                                    </div>
+                                    <a href="https://www.instagram.com/">
+                                        <div class="text-tiny">Instagram</div>
+                                    </a>
+                                </li>
+                                
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="popup-wrap user type-header">
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="header-user wg-user">
+                            <span class="image">
+                                <img src="{% static 'crm/images/logo.png' %}" alt="">
+                            </span>
+                            <span class="flex flex-column">
+                                <span class="body-title mb-2">{{user.username}}</span>
+                            </span>
+                        </span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end has-content" aria-labelledby="dropdownMenuButton3" >
+                        
+                        <li>
+                            <a href="https://mail.google.com/mail/u/0/?tab=rm&ogbl" class="user-item">
+                                <div class="icon">
+                                    <i class="icon-mail"></i>
+                                </div>
+                                <div class="body-title-2">Почта</div>
+                            </a>
+                        </li>
+                        
+                        <li>
+                            <a href="#" class="user-item">
+                                <div class="icon">
+                                    <i class="icon-headphones"></i>
+                                </div>
+                                <div class="body-title-2">Помощь</div>
+                            </a>
+                        </li>
+                        <li>
+                            <form method="post" action="{% url 'logout' %}">
+                                {% csrf_token %}
+                                <button type="submit" class="user-item">
+                                    <div class="icon">
+                                        <i class="icon-log-out"></i>
+                                    </div>
+                                    <div class="body-title-2">Выйти</div>
+                                </button>
+                            </form>
+                        </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /header-dashboard -->
